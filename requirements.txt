@@ -1,0 +1,8 @@
+
+httpx 
+python-dotenv 
+librosa 
+sounddevice 
+wavio
+streamlit
+pyaudio
