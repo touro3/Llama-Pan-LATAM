@@ -3,7 +3,12 @@ import requests
 from crewai import Agent, Task, Crew, LLM
 from crewai_tools import SerperDevTool
 from crewai.project import CrewBase, agent, crew, task
-from properties import SAMBA_API_KEY, SERPER_API_KEY
+from dotenv import load_dotenv
+
+load_dotenv()
+
+SAMBA_API_KEY = os.getenv("SAMBANOVA_API_KEY")
+SERPER_API_KEY = os.getenv("SERPER_API_KEY")
 
 
 def sambanova_completion(model, messages, temperature=0.1):
