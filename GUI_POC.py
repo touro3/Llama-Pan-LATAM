@@ -3,7 +3,7 @@ import pyaudio
 import speech_recognition as sr
 import tempfile
 import os
-
+from crawler.utils.samba import CrawlersCrew
 
 # Função para listar dispositivos de entrada de áudio disponíveis
 def listar_dispositivos_audio():
@@ -124,18 +124,31 @@ else:
             st.warning("Por favor, envie um arquivo de áudio válido.")
 
 # Botão para enviar
+def executar_crawler(localidade, descricao):
+    """Executa o crawler com os inputs do usuário."""
+    try:
+        # Dividir localidade em região e país
+        local_parts = localidade.split(",")
+        region = local_parts[0].strip() if len(local_parts) > 0 else "Desconhecido"
+        country = local_parts[1].strip() if len(local_parts) > 1 else "Desconhecido"
+        
+        # Inicializar e executar o crawler
+        inputs = {
+            "topic": descricao,
+            "region": region,
+            "country": country
+        }
+        crew = CrawlersCrew().crew()
+        crew.kickoff(inputs=inputs)
+        st.success("Crawler executado com sucesso!")
+    except Exception as e:
+        st.error(f"Erro ao executar o crawler: {e}")
 if st.button("Enviar"):
     if not localidade:
         st.error("Por favor, insira sua localização.")
     elif not descricao:
         st.error("Por favor, descreva sua situação ou forneça um áudio válido.")
     else:
-        st.success("Informações enviadas com sucesso!")
-        st.markdown(
-            f"""
-            **Detalhes enviados:**
-            - Localização: {localidade}
-            - Situação: {descricao}
-            """
-        )
+        st.info("Enviando dados para o crawler...")
+        executar_crawler(localidade, descricao)
         st.info("A IA irá processar esses dados para fornecer ajuda personalizada.")
