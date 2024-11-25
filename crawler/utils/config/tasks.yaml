@@ -1,0 +1,16 @@
+crawler_task:
+  description: >
+    Realize uma pesquisa direcionada sobre "{topic}", considerando a região "{region}" e o país "{country}". A pesquisa deve focar exclusivamente em informações oficiais fornecidas por órgãos governamentais ou autoridades competentes. O objetivo é encontrar contatos diretos, como números de telefone de emergência, endereços e sites oficiais de órgãos governamentais relevantes, que permitam à pessoa entrar em contato para resolver sua emergência ou ocorrência.
+
+  expected_output: >
+    Uma lista dos contatos oficiais relacionados a "{topic}", contendo:
+
+    - **Nome da instituição ou órgão governamental**.
+    - **Número de telefone para contato**.
+    - **Endereço físico** (se aplicável).
+    - **Link para o site oficial**.
+    - **Breve descrição de como podem auxiliar na situação**.
+
+    Os resultados devem ser personalizados para a região "{region}" e o país "{country}".
+
+  agent: crawler
