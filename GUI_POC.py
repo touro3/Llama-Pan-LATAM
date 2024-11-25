@@ -125,24 +125,28 @@ else:
 
 # Botão para enviar
 def executar_crawler(localidade, descricao):
-    """Executa o crawler com os inputs do usuário."""
+    """Executa o crawler e exibe a Final Answer no Streamlit."""
     try:
         # Dividir localidade em região e país
         local_parts = localidade.split(",")
         region = local_parts[0].strip() if len(local_parts) > 0 else "Desconhecido"
         country = local_parts[1].strip() if len(local_parts) > 1 else "Desconhecido"
-        
-        # Inicializar e executar o crawler
-        inputs = {
-            "topic": descricao,
-            "region": region,
-            "country": country
-        }
+
+        # Executar o crawler e capturar a Final Answer
+        inputs = {"topic": descricao, "region": region, "country": country}
         crew = CrawlersCrew().crew()
-        crew.kickoff(inputs=inputs)
+        final_answer = crew.kickoff(inputs=inputs)
+
+        # Exibir a resposta no Streamlit
         st.success("Crawler executado com sucesso!")
+        st.subheader("Resposta Final do Agente:")
+        st.markdown(final_answer)  # Exibe a resposta formatada em Markdown
     except Exception as e:
         st.error(f"Erro ao executar o crawler: {e}")
+
+
+
+
 if st.button("Enviar"):
     if not localidade:
         st.error("Por favor, insira sua localização.")
@@ -151,4 +155,5 @@ if st.button("Enviar"):
     else:
         st.info("Enviando dados para o crawler...")
         executar_crawler(localidade, descricao)
-        st.info("A IA irá processar esses dados para fornecer ajuda personalizada.")
+
+

@@ -93,12 +93,25 @@ class CrawlersCrew:
 
 def run():
     inputs = {
-        "topic": "Risco de deslizamento de terra",
-        "region": str(region),
-        "country": str(country),
+        "topic": "Descrição do problema aqui",
+        "region": "Região aqui",
+        "country": "País aqui",
     }
-    CrawlersCrew().crew().kickoff(inputs=inputs)
+    crew = CrawlersCrew().crew()
+    try:
+        result = crew.kickoff(inputs=inputs)  # Captura o resultado completo do agente
+        print("Resultado completo do agente:", result)  # Log do resultado completo
 
+        # Extraia a seção Final Answer
+        final_answer_marker = "## Final Answer:"
+        final_answer_start = result.find(final_answer_marker)
+        if final_answer_start != -1:
+            final_answer = result[final_answer_start + len(final_answer_marker):].strip()
+        else:
+            final_answer = "Nenhum resultado gerado pelo agente."
 
-if __name__ == "__main__":
-    run()
+        print("Final Answer extraída:", final_answer)  # Log da Final Answer
+        return final_answer  # Retorna a Final Answer diretamente
+    except Exception as e:
+        print("Erro ao processar a Final Answer:", str(e))
+        raise
