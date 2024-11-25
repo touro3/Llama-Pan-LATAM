@@ -1,4 +1,3 @@
-
 httpx 
 python-dotenv 
 librosa 
@@ -6,3 +5,10 @@ sounddevice
 wavio
 streamlit
 pyaudio
+googletrans 
+speechrecognition
+streamlit-webrtc
+numpy
+pydub
+gtts
+playsound
