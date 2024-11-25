@@ -32,3 +32,8 @@ https://github.com/sambanova/ai-starter-kit/tree/main/benchmarking
 
 ## Demo recording voice with python
 https://github.com/datarootsio/tutorial-streamlit-demo/blob/master/demo_voice.py
+
+## Usar microfone
+arecord -l
+sudo apt install pulseaudio
+pulseaudio --start
