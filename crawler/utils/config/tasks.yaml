@@ -14,3 +14,19 @@ crawler_task:
     Os resultados devem ser personalizados para a região "{region}" e o país "{country}".
 
   agent: crawler
+
+summarizer_task:
+  description: >
+    Combine e analise os resultados obtidos pelos agentes `crawler` e `rag` relacionados ao tópico "{topic}". O objetivo é criar um resumo conciso e claro que consolide as informações sobre contatos oficiais e os direitos e deveres do cidadão, ajudando o usuário a compreender e aplicar as informações.
+
+  expected_output: >
+    Um resumo claro e estruturado que inclua:
+
+    - **Informações coletadas pelo agente `crawler`**:
+      - Lista de contatos oficiais relevantes.
+    - **Informações fornecidas pelo agente `rag`**:
+      - Direitos e deveres do cidadão aplicáveis.
+    - **Resumo consolidado**:
+      - Pontos-chave das informações coletadas, com explicações sobre como os contatos e os direitos/deveres podem ajudar o usuário na sua ocorrência.
+
+  agent: summarizer

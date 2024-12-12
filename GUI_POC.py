@@ -3,9 +3,10 @@ import pyaudio
 import speech_recognition as sr
 import tempfile
 import os
+from crawler.utils.samba import CrawlersCrew  # Import the CrawlersCrew class
 
 
-# Função para listar dispositivos de entrada de áudio disponíveis
+# Function to list audio devices
 def listar_dispositivos_audio():
     """Lista dispositivos de entrada de áudio disponíveis."""
     audio = pyaudio.PyAudio()
@@ -18,7 +19,7 @@ def listar_dispositivos_audio():
     return dispositivos
 
 
-# Função para gravar áudio usando o microfone
+# Function to record audio
 def gravar_audio(device_index):
     """Grava áudio usando o dispositivo especificado."""
     recognizer = sr.Recognizer()
@@ -41,7 +42,7 @@ def gravar_audio(device_index):
     return None
 
 
-# Função para transcrever áudio de arquivo
+# Function to transcribe audio from file
 def transcrever_audio(arquivo_audio):
     recognizer = sr.Recognizer()
     with sr.AudioFile(arquivo_audio) as source:
@@ -57,18 +58,14 @@ def transcrever_audio(arquivo_audio):
         return f"Erro ao processar o áudio: {e}"
 
 
-logo_image = os.getcwd()+'/images/logo-OCA.png'
+logo_image = os.getcwd() + "/images/logo-OCA.png"
 
-st.set_page_config(
-    page_title="OCA",
-    page_icon=logo_image,
-    layout="wide"
-)
+st.set_page_config(page_title="OCA", page_icon=logo_image, layout="wide")
 
-# Cabeçalho
+# Header
 st.image(logo_image, width=100)
 
-st.title('Projeto OCA')
+st.title("Projeto OCA")
 
 st.markdown(
     """
@@ -77,31 +74,44 @@ st.markdown(
     """
 )
 
-# Formulário para localização
+# Form for location
 st.subheader("1. Informe sua localização")
-localidade = st.text_input("Digite sua cidade e estado (ex: Porto Velho, Rondônia)", placeholder="Sua localização")
+localidade = st.text_input(
+    "Digite sua cidade e estado (ex: Porto Velho, Rondônia)",
+    placeholder="Sua localização",
+)
 
-# Entrada de texto ou áudio
+# Input: Text or Audio
 st.subheader("2. Descreva sua situação")
 input_mode = st.radio("Escolha o tipo de entrada:", ("Texto", "Áudio"))
 
-descricao = st.session_state.get("descricao", "")  # Variável inicial para descrição
+descricao = st.session_state.get("descricao", "")  # Variable for description
 
 if input_mode == "Texto":
-    descricao = st.text_area("Digite a descrição do problema:", placeholder="Exemplo: Preciso de ajuda médica.")
+    descricao = st.text_area(
+        "Digite a descrição do problema:",
+        placeholder="Exemplo: Preciso de ajuda médica.",
+    )
     st.session_state["descricao"] = descricao
 else:
-    # Opções de envio de áudio
-    audio_source = st.radio("Escolha o modo de envio de áudio:", ("Gravação pelo microfone", "Upload de arquivo"))
+    # Audio input options
+    audio_source = st.radio(
+        "Escolha o modo de envio de áudio:",
+        ("Gravação pelo microfone", "Upload de arquivo"),
+    )
 
     if audio_source == "Gravação pelo microfone":
-        # Listar dispositivos de áudio
+        # List audio devices
         dispositivos_audio = listar_dispositivos_audio()
         if not dispositivos_audio:
             st.error("Nenhum dispositivo de entrada de áudio disponível.")
         else:
-            dispositivo_selecionado = st.selectbox("Selecione o dispositivo de áudio:", dispositivos_audio.values())
-            dispositivo_index = list(dispositivos_audio.keys())[list(dispositivos_audio.values()).index(dispositivo_selecionado)]
+            dispositivo_selecionado = st.selectbox(
+                "Selecione o dispositivo de áudio:", dispositivos_audio.values()
+            )
+            dispositivo_index = list(dispositivos_audio.keys())[
+                list(dispositivos_audio.values()).index(dispositivo_selecionado)
+            ]
 
             if st.button("Gravar Áudio"):
                 descricao_gravada = gravar_audio(device_index=dispositivo_index)
@@ -111,7 +121,9 @@ else:
                     st.write("**Transcrição do Áudio:**", descricao)
 
     elif audio_source == "Upload de arquivo":
-        audio_file = st.file_uploader("Faça upload de um arquivo de áudio:", type=["wav", "mp3"])
+        audio_file = st.file_uploader(
+            "Faça upload de um arquivo de áudio:", type=["wav", "mp3"]
+        )
         if audio_file:
             with tempfile.NamedTemporaryFile(delete=False) as temp_audio:
                 temp_audio.write(audio_file.read())
@@ -123,19 +135,25 @@ else:
         else:
             st.warning("Por favor, envie um arquivo de áudio válido.")
 
-# Botão para enviar
+# Submit button
 if st.button("Enviar"):
     if not localidade:
         st.error("Por favor, insira sua localização.")
     elif not descricao:
         st.error("Por favor, descreva sua situação ou forneça um áudio válido.")
     else:
-        st.success("Informações enviadas com sucesso!")
-        st.markdown(
-            f"""
-            **Detalhes enviados:**
-            - Localização: {localidade}
-            - Situação: {descricao}
-            """
-        )
-        st.info("A IA irá processar esses dados para fornecer ajuda personalizada.")
+        st.success("Processando dados com IA...")
+        st.info("Aguarde enquanto a IA analisa as informações fornecidas.")
+
+        # Pass inputs to the CrawlersCrew
+        inputs = {
+            "topic": descricao,
+            "region": localidade.split(",")[0],
+            "country": localidade.split(",")[-1].strip(),
+        }
+        crawlers_crew = CrawlersCrew().crew()
+        result = crawlers_crew.kickoff(inputs=inputs)
+
+        # Display AI results
+        st.markdown("### Resultados da IA:")
+        st.markdown(result.raw)
